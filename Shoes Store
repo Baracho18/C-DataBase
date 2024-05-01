@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_ITEMS 100
+
+struct Item {
+    int codigo;
+    char modelo[50];
+    char cor[20];
+    char genero[20];
+    int numeracao;
+    int quantidade;
+};
+
+struct Item stock[MAX_ITEMS];
+int itemCount = 0;
+
+void addItem(int codigo, char modelo[], char cor[], char genero[], int numeracao, int quantidade) {
+    if (itemCount < MAX_ITEMS) {
+        stock[itemCount].codigo = codigo;
+        strcpy(stock[itemCount].modelo, modelo);
+        strcpy(stock[itemCount].cor, cor);
+        strcpy(stock[itemCount].genero, genero);
+        stock[itemCount].numeracao = numeracao;
+        stock[itemCount].quantidade = quantidade;
+        itemCount++;
+        printf("Item adicionado com sucesso!\n");
+    } else {
+        printf("Estoque está cheio!\n");
+    }
+}
+
+void removeItem(int codigo) {
+    int found = 0;
+    for (int i = 0; i < itemCount; i++) {
+        if (stock[i].codigo == codigo) {
+            found = 1;
+            for (int j = i; j < itemCount - 1; j++) {
+                stock[j] = stock[j + 1];
+            }
+            itemCount--;
+            printf("Item removido com sucesso!\n");
+            break;
+        }
+    }
+    if (!found) {
+        printf("Item não encontrado!\n");
+    }
+}
+
+void displayItems() {
+    printf("Itens em estoque:\n");
+    for (int i = 0; i < itemCount; i++) {
+        printf("Código: %d, Modelo: %s, Cor: %s, Gênero: %s, Numeração: %d, Quantidade: %d\n",
+               stock[i].codigo, stock[i].modelo, stock[i].cor, stock[i].genero, stock[i].numeracao, stock[i].quantidade);
+    }
+}
+
+int main() {
+    int choice;
+    int codigo;
+    char modelo[50];
+    char cor[20];
+    char genero[20];
+    int numeracao;
+    int quantidade;
+    bool invalidInput; // Quando o usuário digitar um valor inválido esta linha impede que o programa continue.
+
+do {
+        printf("\nSistema Gerenciador de Estoque\n");
+        printf("1. Adicionar Item\n");
+        printf("2. Remover Item\n");
+        printf("3. Mostrar Itens\n");
+        printf("4. Sair\n");
+        printf("Sua escolha: ");
+        if (scanf("%d", &choice) != 1) { // Verificar se a entrada é um número inteiro
+            printf("Escolha inválida! Por favor, insira um número.\n");
+            while(getchar() != '\n'); // Limpar o buffer de entrada
+            continue; // Voltar ao início do loop
+        }
+        while(getchar() != '\n'); 
+
+        switch (choice) {
+            case 1:
+                invalidInput = false; // Inicializar como falso antes de validar a entrada
+                printf("Enter código: ");
+                if (scanf("%d", &codigo) != 1) { // Verificar se a entrada é um número inteiro
+                    printf("Entrada inválida! Por favor, insira um número.\n");
+                    while(getchar() != '\n'); 
+                    invalidInput = free; // Indicar que a entrada foi inválida
+                }
+                while(getchar() != '\n');
+
+                if (invalidInput) { // Se a entrada foi inválida, voltar ao menu
+                    break;
+                }
+
+                printf("Enter modelo: ");
+                fgets(modelo, 50, stdin);
+                modelo[strcspn(modelo, "\n")] = 0; 
+                printf("Enter cor: ");
+                fgets(cor, 20, stdin);
+                cor[strcspn(cor, "\n")] = 0; 
+                printf("Enter gênero: ");
+                fgets(genero, 20, stdin);
+                genero[strcspn(genero, "\n")] = 0; 
+                printf("Enter numeração: ");
+                scanf("%d", &numeracao);
+                while(getchar() != '\n'); 
+                printf("Enter quantidade: ");
+                scanf("%d", &quantidade);
+                while(getchar() != '\n'); 
+                addItem(codigo, modelo, cor, genero, numeracao, quantidade);
+                break;
+            case 2:
+                printf("Enter código para remover: ");
+                if (scanf("%d", &codigo) != 1) { // Verificar se a entrada é um número inteiro
+                    printf("Entrada inválida! Por favor, insira um número.\n");
+                    while(getchar() != '\n'); 
+                    break; // Voltar ao menu
+                }
+                while(getchar() != '\n');
+                removeItem(codigo);
+                break;
+            case 3:
+                displayItems();
+                break;
+            case 4:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Escolha inválida!\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
